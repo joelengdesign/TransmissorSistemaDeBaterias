@@ -18,19 +18,19 @@ A serialização de dados consiste em juntar todas as variáveis em um único ar
 
 A extração de dados da UACT CC por MODBUS é realizada acessando os registradores de 2 bytes, onde estão armazenadas as variáveis da aplicação Sistema de Baterias. O protocolo consiste em enviar um vetor de bytes (Requisição) para a UACT CC, que obedece alguns requisitos. Este vetor de 8 bytes contém as seguintes informações:
 
-posição 0: Identificador do dispositivo UACT CC que é 0x02;
-posição 1: Código da função que neste caso é 0x04 (para acessar os registradores do tipo input);
-posição 2 e 3: Endereço do registrador inicial;
-posição 4 e 5: Quantidade de registradores a partir do registrador inicial;
-posição 6 e 7: ErrorCheck que identifica a integridade da mensagem de requisição.
+- posição 0: Identificador do dispositivo UACT CC que é 0x02;
+- posição 1: Código da função que neste caso é 0x04 (para acessar os registradores do tipo input);
+- posição 2 e 3: Endereço do registrador inicial;
+- posição 4 e 5: Quantidade de registradores a partir do registrador inicial;
+- posição 6 e 7: ErrorCheck que identifica a integridade da mensagem de requisição.
 
 A mensagem (vetor) de resposta que a UACT CC envia ao Arduino contém as informações:
 
-posição 0: Identificador do dispositivo UACT CC que é 0x02;
-posição 1: Código da função que neste caso é 0x04 (para acessar os registradores do tipo input);
-posição 2: Quantidade de bytes da mensagem útil;
-posição 3 até n-3: Mensagem útil, de forma que todas as variáveis floats contém estão armazenadas em 4 bytes.
-posição n-1 e n: ErrorCheck que identifica a integridade resposta que o Arduino recebe.
+- posição 0: Identificador do dispositivo UACT CC que é 0x02;
+- posição 1: Código da função que neste caso é 0x04 (para acessar os registradores do tipo input);
+- posição 2: Quantidade de bytes da mensagem útil;
+- posição 3 até n-3: Mensagem útil, de forma que todas as variáveis floats contém estão armazenadas em 4 bytes.
+- posição n-1 e n: ErrorCheck que identifica a integridade resposta que o Arduino recebe.
 
 em que n indica a última posição do vetor de resposta.
 
