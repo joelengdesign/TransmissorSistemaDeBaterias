@@ -58,7 +58,3 @@ Uma biblioteca MODBUS foi criada para comunicação MODBUS do Arduino com a UACT
 - void MODBUS::EnviarPacote(byte EnderecoDoDispositivo, byte CodigoDaFuncao, uint16_t EnderecoInicial, uint16_t QuantidadeDeRegistradores): Método público envia a requisição para a UACT CC com os parâmetros essenciais para comunicação MODBUS;
 - uint16_t MODBUS::ErrorCheck(byte mensagem[], uint8_t tamanho): Método privado que retorna o ErrorCheck (de 2 bytes) da mensagem, seja ela de requisição (que o Arduino envia) ou de resposta (que o Arduino recebe);
 - bool MODBUS::validacaoPacote(byte pacote[]): Método que retorna um valor booleano de acordo com o ErrorCheck calculado, relacionado a mensagem que o Arduino recebe da UACT CC.
-
-
-
-"# TransmissorSistemaDeBaterias" 
