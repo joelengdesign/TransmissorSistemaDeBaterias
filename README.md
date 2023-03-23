@@ -29,7 +29,7 @@ A mensagem (vetor) de resposta que a UACT CC envia ao Arduino contém as informa
 - posição 0: Identificador do dispositivo UACT CC que é 0x02;
 - posição 1: Código da função que neste caso é 0x04 (para acessar os registradores do tipo input);
 - posição 2: Quantidade de bytes da mensagem útil;
-- posição 3 até n-3: Mensagem útil, de forma que todas as variáveis floats contém estão armazenadas em 4 bytes.
+- posição 3 até n-3: Mensagem útil, de forma que as variáveis floats estão armazenadas a cada 4 bytes.
 - posição n-1 e n: ErrorCheck que identifica a integridade resposta que o Arduino recebe.
 
 em que n indica a última posição do vetor de resposta.
