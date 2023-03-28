@@ -114,8 +114,8 @@ void receivedPkgTimerCallback(){
     }
   }
   else{ // se o pacote não estiver correto reseta o arduino
-    // Serial.println("Pacote inválido");
-    // softwareReset::standard();
+    Serial.println("Pacote inválido");
+    softwareReset::standard();
   }
   clearReceivedPackage();
 }
