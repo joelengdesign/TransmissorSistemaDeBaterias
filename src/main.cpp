@@ -14,7 +14,7 @@ static const PROGMEM u1_t NWKSKEY[16] = {/* Informação confidencial */}; //pro
 
 static const u1_t PROGMEM APPSKEY[16] = {/* Informação confidencial */}; //projeto
 
-static const u4_t DEVADDR = 0x260138A8 ; // projeto <-- Change this address for every node!
+static const u4_t DEVADDR = 0x260138A2 ; // projeto <-- Change this address for every node!
 
 void os_getArtEui (u1_t* buf) { }
 void os_getDevEui (u1_t* buf) { }
