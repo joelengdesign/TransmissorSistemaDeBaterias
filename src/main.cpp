@@ -1,10 +1,10 @@
 // Código de transmissão de dados da aplicação SISTEMA DE BATERIAS relacionada ao Smart Campus da UFPA
-// última atualização em 28 de março de 2023
+// última atualização em 29 de março de 2023
 
 #include <Arduino.h>
 #include <lmic.h> // biblioteca lmic para transmissão LoRa
 #include <hal/hal.h>
-#include <MODBUS.h> // biblioteca MODBUS criada para extração de dados da UACT CC
+#include <MODBUS.h> // biblioteca MODBUS criada para extração de dados da UACT
 #include <softwareReset.hpp> // biblioteca para resetar o microcontrolador
 
 MODBUS modbus(23,LED_BUILTIN);
@@ -67,12 +67,18 @@ void serialEvent1(){
 }
 
 // função para controlar o tempo entre requisição e resposta à UACT CC
-void millisEspera(unsigned long espera){
-    unsigned long initTime = millis();
-    while (millis() - initTime < espera )
-    {
-      serialEvent1();
-    }
+void espera(unsigned long tempo) {
+  static unsigned long lastRunTime = 0; // variável estática para armazenar o tempo da última execução da função
+  unsigned long currentTime = millis(); // obter o tempo atual
+
+  if (currentTime - lastRunTime >= tempo) { // verificar se já passou o tempo especificado
+    lastRunTime = currentTime; // atualizar o tempo da última execução
+    return; // sair da função e continuar a execução do programa
+  }
+
+  // se o tempo ainda não passou, aguardar
+  delay(tempo - (currentTime - lastRunTime));
+  lastRunTime = millis(); // atualizar o tempo da última execução
 }
 
 // função que limpa o payload de resposta da UACT CC
@@ -130,7 +136,7 @@ void do_send(osjob_t* j) {
     // acessando o timestamp nos registradores holding
     clearReceivedPackage();
     modbus.EnviarPacote(DeviceAdress,TypeRegisters,InitAdress,QuantRegisters); // envia a requisição
-    millisEspera(300); // aguarda 300 milissegundos
+    espera(300); // aguarda 300 milissegundos
     Serial.print("Pacote Recebido: ");
     modbus.printar(uactComponent.packetReceived,sizeof(uactComponent.packetReceived)); // printa o pacote recebido da UACT CC
     receivedPkgTimerCallback(); // organiza o pacote para transmissão LoRa
