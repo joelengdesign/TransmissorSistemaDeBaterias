@@ -68,17 +68,10 @@ void serialEvent1(){
 
 // função para controlar o tempo entre requisição e resposta à UACT CC
 void espera(unsigned long tempo) {
-  static unsigned long lastRunTime = 0; // variável estática para armazenar o tempo da última execução da função
-  unsigned long currentTime = millis(); // obter o tempo atual
-
-  if (currentTime - lastRunTime >= tempo) { // verificar se já passou o tempo especificado
-    lastRunTime = currentTime; // atualizar o tempo da última execução
-    return; // sair da função e continuar a execução do programa
+  unsigned long inicio = millis();
+  while (millis() - inicio < tempo) {
+    serialEvent1(); // Execute a função serialEvent1 durante o tempo de espera
   }
-
-  // se o tempo ainda não passou, aguardar
-  delay(tempo - (currentTime - lastRunTime));
-  lastRunTime = millis(); // atualizar o tempo da última execução
 }
 
 // função que limpa o payload de resposta da UACT CC
