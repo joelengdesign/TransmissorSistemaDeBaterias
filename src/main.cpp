@@ -40,11 +40,6 @@ const byte TypeRegisters = 0x04; // código de acesso dos registradores do tipo 
 const uint16_t InitAdress = 0x0004; // endereço do registrador inicial
 const uint16_t QuantRegisters = 0x001A; // quantidade de registradores
 
-union {
-  float valor_float;
-  uint32_t valor_inteiro;
-} conversor;
-
 float TensaoBarramento;
 float Corrente1;
 float Corrente2;
@@ -57,6 +52,7 @@ float Corrente8;
 float PotenciaCC;
 float EnergiaFornecida;
 float EnergiaConsumida;
+
 
 // parâmetros dos dados recebidos da UAC CC
 struct UACTStruct
@@ -146,8 +142,6 @@ void espera_min(unsigned long time_min) {
   }
 }
 
-
-
 void printarVars(){
 
     // timestamp
@@ -164,91 +158,19 @@ void printarVars(){
     int hora = hour();
     int minuto = minute();
 
-
     // variaveis
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[5] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[6] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[7] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[8];
-
-    TensaoBarramento = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[9] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[10] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[11] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[12];
-
-    Corrente1 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[13] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[14] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[15] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[16];
-
-    Corrente2 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[17] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[18] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[19] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[20];
-
-    Corrente3 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[21] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[22] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[23] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[24];
-
-    Corrente4 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[25] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[26] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[27] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[28];
-
-    Corrente5 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[29] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[30] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[31] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[32];
-
-    Corrente6 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[33] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[34] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[35] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[36];
-
-    Corrente7 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[37] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[38] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[39] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[40];
-
-    Corrente8 = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[41] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[42] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[43] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[44];
-
-    PotenciaCC = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[45] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[46] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[47] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[48];
-
-    EnergiaFornecida = conversor.valor_float;
-
-    conversor.valor_inteiro = ((uint32_t)uactComponent.PkgTotal[49] << 24) | 
-                              ((uint32_t)uactComponent.PkgTotal[50] << 16)|
-                              ((uint32_t)uactComponent.PkgTotal[51] << 8) | 
-                              (uint32_t)uactComponent.PkgTotal[52];
-
-    EnergiaConsumida = conversor.valor_float;
+    TensaoBarramento = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,5,6,7,8);
+    Corrente1 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,9,10,11,12);
+    Corrente2 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,13,14,15,16);
+    Corrente3 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,17,18,19,20);
+    Corrente4 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,21,22,23,24);
+    Corrente5 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,25,26,27,28);
+    Corrente6 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,29,30,31,32);
+    Corrente7 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,33,34,35,36);
+    Corrente8 = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,37,38,39,40);
+    PotenciaCC = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,41,42,43,44);
+    EnergiaFornecida = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,45,46,47,48);
+    EnergiaConsumida = modbus.IEEE754_HexToFloat(uactComponent.PkgTotal,49,50,51,52);
 
     // Imprime a data e hora obtidas
     if(dia<10){
@@ -285,41 +207,40 @@ void printarVars(){
     }
     Serial.println("min");
 
+    Serial.print("Tensão:\t\t\t");
+    Serial.println(TensaoBarramento);
 
-    Serial.print("Tensão:");
-    Serial.print(TensaoBarramento);
-    Serial.print(",");
-    Serial.print("Corrente_1:");
+    Serial.print("Corrente 1:\t\t");
     Serial.println(Corrente1);
-    Serial.print(",");
-    Serial.print("Corrente_2:");
+
+    Serial.print("Corrente 2:\t\t");
     Serial.println(Corrente2);
-    Serial.print(",");
-    Serial.print("Corrente_3:");
+
+    Serial.print("Corrente 3:\t\t");
     Serial.println(Corrente3);
-    Serial.print(",");
-    Serial.print("Corrente_4:");
+
+    Serial.print("Corrente 4:\t\t");
     Serial.println(Corrente4);
-    Serial.print(",");
-    Serial.print("Corrente_5:");
+
+    Serial.print("Corrente 5:\t\t");
     Serial.println(Corrente5);
-    Serial.print(",");
-    Serial.print("Corrente_6:");
+
+    Serial.print("Corrente 6:\t\t");
     Serial.println(Corrente6);
-    Serial.print(",");
-    Serial.print("Corrente_7:");
+
+    Serial.print("Corrente 7:\t\t");
     Serial.println(Corrente7);
-    Serial.print(",");
-    Serial.print("Corrente_8:");
+
+    Serial.print("Corrente 8:\t\t");
     Serial.println(Corrente8);
-    Serial.print(",");
-    Serial.print("Potencia:");
+
+    Serial.print("Potencia:\t\t");
     Serial.println(PotenciaCC);
-    Serial.print(",");
-    Serial.print("EnergiaFornecida:");
+
+    Serial.print("Energia Fornecida:\t");
     Serial.println(EnergiaFornecida);
-    Serial.print(",");
-    Serial.print("EnergiaConsumida:");
+
+    Serial.print("Energia Consumida:\t");
     Serial.println(EnergiaConsumida);
 }
 
@@ -346,7 +267,7 @@ void do_send(osjob_t* j) {
     LMIC_setTxData2(1, uactComponent.PkgTotal, sizeof(uactComponent.PkgTotal), 0); // envia o pacote organizado por LoRa
     Serial.println("Pacote enviado");
     clearReceivedPackageTotal(); // limpa o pacote de envio para não transmitir a informação anterior, quando houver erros no pacote
-    // espera_min(1);
+    espera_min(4);
   }
 }
 void onEvent (ev_t ev) {
