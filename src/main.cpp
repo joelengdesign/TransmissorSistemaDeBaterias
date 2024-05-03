@@ -20,9 +20,9 @@
 MODBUS modbus(23);
 
 // chaves de acesso AES128 da criptografia LoRaWAN
-static const PROGMEM u1_t NWKSKEY[16] = {/* Chave restrita*/};
+static const PROGMEM u1_t NWKSKEY[16] = {/* Chave Restrita*/}; //projeto
 
-static const u1_t PROGMEM APPSKEY[16] = {/* Chave restrita*/};
+static const u1_t PROGMEM APPSKEY[16] = {/* Chave Restrita*/}; //projeto
 
 static const u4_t DEVADDR = 0x26013804 ; // projeto <-- Change this address for every node!
 
@@ -88,7 +88,9 @@ UACTStruct uactComponent;
 
 // função que é chamada sempre que existem dados na serial do arduino para serem lidos
 void serialEvent1(){
-  if (modbus.stillWaitNextBit) while (Serial1.available()) Serial1.readBytes(uactComponent.packetReceived,57);
+  if (modbus.stillWaitNextBit)
+    while (Serial1.available())
+      Serial1.readBytes(uactComponent.packetReceived,sizeof(uactComponent.packetReceived));
 }
 
 // função para controlar o tempo entre requisição e resposta à UACT CC
@@ -99,14 +101,12 @@ void espera(unsigned long tempo) {
   }
 }
 
-// função que limpa o payload de resposta da UACT CC
-void clearReceivedPackage(){
-  for (byte i = 0; i < sizeof(uactComponent.packetReceived); i++) uactComponent.packetReceived[i] = 0x0;
-}
 
-// função que limpa o payload de transmissão com todos os dados tratados
-void clearReceivedPackageTotal(){
-  for (byte i = 0; i < sizeof(uactComponent.PkgTotal); i++) uactComponent.PkgTotal[i] = 0x0;
+template <typename T, size_t N>
+void clearArray(T (&array)[N]) {
+  for (size_t i = 0; i < N; ++i) {
+    array[i] = T();
+  }
 }
 
 void printTimes(){
@@ -124,37 +124,17 @@ void printTimes(){
   int minuto = minute();
   int segundo = second();
 
-  // Imprime a data e hora obtidas
-    if(dia<10){
-      Serial.print("0");
-    }
-    Serial.print(dia);
-    Serial.print("/");
+  Serial.print("Data: ");
+  Serial.print((day()< 10) ? "0"+String(day()) : String(day())); Serial.print("/");
+  Serial.print((month() < 10) ? "0"+String(month()) : String(month())); Serial.print("/");
+  Serial.println(year());
 
-    if(mes<10){
-      Serial.print("0");
-    }
-    Serial.print(mes);
-    Serial.print("/");
-    Serial.println(ano);
+  Serial.print("Hora: ");
+  Serial.print(String(hour())+"h");
+  Serial.print((minute() < 10) ? "0"+String(minute()) : String(minute())+"min");
+  Serial.print((second() < 10) ? "0"+String(second()) : String(second())+"seg");
 
-    if(hora<10){
-      Serial.print("0");
-    }
-    Serial.print(hora);
-    Serial.print("h");
-
-    if(minuto<10){
-      Serial.print("0");
-    }
-    Serial.print(minuto);
-    Serial.println("min");
-
-    if(segundo<10){
-      Serial.print("0");
-    }
-    Serial.print(segundo);
-    Serial.println("min");
+  Serial.println();
 }
 
 void printVarsFloat(){
@@ -192,7 +172,7 @@ void OrganizePkg(){
     Serial.println("Pacote inválido");
     softwareReset::standard();
   }
-  clearReceivedPackage();
+  clearArray(uactComponent.packetReceived);
 }
 
 void espera_min(unsigned long time_min) {
@@ -213,7 +193,7 @@ void do_send(osjob_t* j) {
   }
   else {
     // acessando o timestamp nos registradores holding
-    clearReceivedPackage();
+    clearArray(uactComponent.packetReceived);
     modbus.EnviarPacote(DeviceAdress,TypeRegisters,InitAdress,QuantRegisters); // envia a requisição
     espera(300); // aguarda 300 milissegundos
     // Serial.print("Pacote Recebido: ");
@@ -229,7 +209,7 @@ void do_send(osjob_t* j) {
 
     LMIC_setTxData2(1, uactComponent.PkgTotal, sizeof(uactComponent.PkgTotal), 0); // envia o pacote organizado por LoRa
     Serial.println("Pacote enviado");
-    clearReceivedPackageTotal(); // limpa o pacote de envio para não transmitir a informação anterior, quando houver erros no pacote
+    clearArray(uactComponent.packetReceived); // limpa o pacote de envio para não transmitir a informação anterior, quando houver erros no pacote
     // espera_min(4);
   }
 }
